@@ -1,34 +1,42 @@
 const modulesCache = () => {
   return {
-    tarefas: []
+    tarefas: [],
+    lista: {
+      tarefas: []
+    }
   }
 }
 
-const state = modulesCache
+const state = modulesCache()
 
 const getters = {
-  verTodasTarefas: (state) => {
-    return state.tarefas 
+  verTodosStates: (state) => {
+    return state
+  },
+  verTodasTarefas: ({ tarefas }) => {
+    return tarefas 
   },
 }
 
 const mutations = {
   salvarTodasTarefasBd: (state, data) => {
-    return state.tarefas = data
+    return state.tarefas = [
+      ...data
+    ]
   }
 }
 
 const actions = {
   setTodasTarefas: ({ commit }, data) => {
     if (data) {
-      commit("salvarTodasTarefasBd", {...data })
+      return commit("salvarTodasTarefasBd", data)
     }
   }
 }
 
 
-const tarefasStore = {
-  nameSpaced: true,
+const tarefaStore = {
+  namespaced: true,
   state,
   actions,
   getters,
@@ -36,5 +44,5 @@ const tarefasStore = {
 }
 
 
-export default tarefasStore
+export default tarefaStore
 
