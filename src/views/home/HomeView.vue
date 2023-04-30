@@ -41,36 +41,38 @@
                   <card-product
                     :tarefa="tarefa"
                     :concluido="concluido"
-                    @deletarTarefa="handleDeletarTarefa(id)"
-                  />
-                  <dialog-editar
-                    :dialogEditar="dialogEditar"
-                    :value="tarefa"
                     @editarTarefa="handleAbrirDialogEditar(id)"
-                    @limparInput="() => tarefa = ''"
+                    @deletarTarefa="handleDeletarTarefa(id)"
                   />
                 </div>
               </v-col>
               <v-col
-                v-else
-                cols="12"
+              v-else
+              cols="12"
               >
-                <span 
+              <span 
                   v-text="'Sem tarefas'"
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-col>
+                  />
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-col>
+        <dialog-editar
+          :value="novaTarefa.tarefa"
+          :dialogEditarTarefas="dialogEditar"
+          @change="() => dialogEditar = false"
+          @limparInput="() => this.novaTarefa.tarefa = ''"
+          @changeUpdate="handleEditarTarefas(tarefaID)"
+        />
     </v-row>
   </v-container>
 </template>
 
 <script>
   import { mixins } from "vue-class-component"
-  import { Component } from "vue-property-decorator"
-  import { post, remove } from "@/plugins/helpers/useBd"
+  import { Component, Vue } from "vue-property-decorator"
+  import { post, remove, update } from "@/middlewares/useBd"
   import { namespace } from "vuex-class"
   import MixinsSalvarNoCacheTarefas from "@/plugins/mixins/MiximSalvarNoCache"
 
@@ -100,26 +102,30 @@
   ) {
     
     @tarefaStore.Getter("verTodasTarefas") getTodasTarefas
-    @tarefaStore.Getter("verTodosStates") getTodosStates
 
 
     novaTarefa = {
       tarefa: '',
       concluido: false
     }
+
     dialogEditar = false
+    tarefaID = 0
 
     mounted() {
-      this.listarTarefas()
-      console.log("home", this.getTodasTarefas)
-      console.log("todos-States", this.getTodosStates.lista)
+      this.listaDeTarefas()
     }
 
     async handleAdicionarTarefa() {
       try {
-        await post("tarefas", this.novaTarefa)
+        const PAYLOAD = require("@/data/tarefa/tarefa.json")
+
+        Vue.set(PAYLOAD, "tarefa", this.novaTarefa.tarefa)
+        Vue.set(PAYLOAD, "concluido", this.novaTarefa.concluido)
+
+        await post("tarefas", PAYLOAD)
         this.novaTarefa.tarefa = ""
-        this.listarTarefas()
+        this.listaDeTarefas()
         return "Tarefa adicionada com sucesso!"
       } catch {
         console.log("Error ao adiocionar a tarefa!")
@@ -132,17 +138,27 @@
       return "Produto Removido com sucesso!"
     }
 
-
-    handleAbrirDialogEditar(id) {
-      return this.getTodosStates.tarefas.filter(item => {
-        if (item.id === id) {
-          localStorage.setItem("editar-pelo-id", {
-            id: item.id
-          })
+    async handleAbrirDialogEditar(id) {
+      const response = await this.pegarTodasTarefasBD()
+      response.filter(item => {
+        if(item.id === id) {
+          this.tarefaID = item.id
           this.novaTarefa.tarefa = item.tarefa
-          this.dialogEditar = true
+          return this.dialogEditar = true
         }
       })
+    }
+
+    async handleEditarTarefas(id) {
+      const PAYLOAD = require("@/data/tarefa/tarefa.json")
+
+      Vue.set(PAYLOAD, "tarefa", this.novaTarefa.tarefa)
+      await update("tarefas", this.novaTarefa, id)
+      console.log("Tarefa Editada com sucesso!")
+
+      this.listaDeTarefas()
+      
+      return this.dialogEditar = false
     }
   }
 </script>

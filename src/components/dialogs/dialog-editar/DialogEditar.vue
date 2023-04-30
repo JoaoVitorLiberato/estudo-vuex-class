@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    v-model="dialogEditar"
+    v-model="dialogEditarTarefas"
     width="500"
   >
     <v-card>
@@ -15,6 +15,7 @@
         <v-btn
           text
           plain
+          @click="$emit('change')"
         >
           <v-icon>
             mdi-close
@@ -32,6 +33,8 @@
           class="mt-5"
         >
           <v-text-field
+            v-model="setValue"
+            :value="setValue"
             label="Edite sua tarefa"
             outlined
           />
@@ -50,7 +53,7 @@
         <v-btn
           color="primary"
           text
-          @click="$emit('editarTarefa')"
+          @click="$emit('changeUpdate')"
         >
           Editar
         </v-btn>
@@ -61,16 +64,15 @@
 
 <script>
   import { mixins } from "vue-class-component"
-  import { Component, Prop, Emit } from "vue-property-decorator"
+  import { Component, ModelSync, PropSync } from "vue-property-decorator"
 
   @Component({})
 
   export default class DialogEditar extends mixins() {
-    @Emit("editarTarefa")
-    @Emit("limparInput")
-    @Prop({ default: false }) dialogEditar
-    @Prop({ default: "" }) valueInput
-
+    @ModelSync('dialogEditarTarefas', 'change', { default: false }) setDialogEditar
+    @ModelSync('update', 'changeUpdate', { default: true }) setUpdate
+    @ModelSync('valueInput', 'limparInput', { type: String }) setValueInput
+    @PropSync("value", { type: String}) setValue
   }
 
 </script>

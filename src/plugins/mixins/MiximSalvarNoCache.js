@@ -1,21 +1,39 @@
 import { Component, Vue } from "vue-property-decorator"
-import { listarTodasTarefas } from "@/plugins/middleware/listasDeTarefas"
 import { namespace } from "vuex-class"
+import { list } from "@/middlewares/useBd"
 
-const TAREFA_STORE = namespace("tarefaStore")
+const tarefaStore = namespace("tarefaStore")
 
 @Component({})
 
 export default class MixinsSalvarNoCacheTarefas extends Vue {
-  @TAREFA_STORE.Action("setTodasTarefas") TodasTarefas
+  @tarefaStore.Action("setTodasTarefas") setTodasTarefas
 
-  async listarTarefas () {
-    const response = await listarTodasTarefas()
-    if (response.length > 0) {
-      console.log("Cache atualizado!")
-      this.TodasTarefas(response)
+
+  async pegarTodasTarefasBD () {
+    try {
+      const response = await list("tarefas")
+      
+      if(!response)  {
+        console.log("Você não possui nenhuma tarefa salva no banco de dados!")
+        return;
+      }
+
+      return response
+    } catch {
+      console.log("Error ao tentar acessar as tarefas salvas no banco de dados")
     }
-    return response
   }
 
+  async listaDeTarefas () {
+    const payload = await this.pegarTodasTarefasBD()
+
+    if(payload.length === 0) {
+      console.log("Não possui tarefas em nosso banco de dados salvos!")
+      return;
+    }
+
+    console.log("Cache atualizado!")
+    return this.setTodasTarefas(payload)
+  } 
 }

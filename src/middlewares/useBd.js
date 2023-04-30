@@ -1,4 +1,4 @@
-import supabase from "../api/supabase"
+import supabase from "../plugins/api/supabase"
 
 
 const post = async ( table, form ) => {

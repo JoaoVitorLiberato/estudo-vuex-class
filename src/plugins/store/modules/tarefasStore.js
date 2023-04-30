@@ -1,35 +1,25 @@
-const modulesCache = () => {
-  return {
-    tarefas: [],
-    lista: {
-      tarefas: []
-    }
-  }
+const state = {
+  itens: {
+    tarefas: []
+  },
 }
 
-const state = modulesCache()
-
 const getters = {
-  verTodosStates: (state) => {
-    return state
-  },
-  verTodasTarefas: ({ tarefas }) => {
-    return tarefas 
+  verTodasTarefas: ({ itens }) => {
+    return itens.tarefas
   },
 }
 
 const mutations = {
-  salvarTodasTarefasBd: (state, data) => {
-    return state.tarefas = [
-      ...data
-    ]
+  salvarTodasTarefasBd: ({itens }, payload) => {
+    return itens.tarefas =  [...payload]
   }
 }
 
 const actions = {
-  setTodasTarefas: ({ commit }, data) => {
-    if (data) {
-      return commit("salvarTodasTarefasBd", data)
+  setTodasTarefas({ commit }, payload) {
+    if (payload && payload.length > 0) {
+      return commit("salvarTodasTarefasBd", payload)
     }
   }
 }

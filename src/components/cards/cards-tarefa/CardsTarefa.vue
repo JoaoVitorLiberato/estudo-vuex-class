@@ -3,7 +3,8 @@
     max-width="100%"
   >
     <v-card
-      class="my-1"
+      :class="$vuetify.breakpoint.xsOnly ? 'my-4 py-4' : 'my-1 py-2'"
+      outlined
     >
       <v-row>
         <v-col
