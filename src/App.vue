@@ -3,23 +3,12 @@
     <v-app-bar
       app
       flat
-      :class="$vuetify.breakpoint.smAndDown ? 'd-flex justify-center' : 'd-flex justify-end'"
+      :class="$vuetify.breakpoint.smAndDown ? 'd-flex justify-center' : 'd-flex justify-start'"
     >
-
-      <v-responsive
-        max-width="600"
-      >
-        <v-text-field
-          v-model="search"
-          dense
-          flat
-          hide-details
-          rounded
-          solo-inverted
-          :append-icon="search === '' ? 'mdi-magnify' : 'mdi-window-close'"
-          @click:append="handleCleanSearch"
-        />
-      </v-responsive>
+      <h2
+        class="text-uppercase"
+        v-text="'Lista de Tarefas'"
+      />
     </v-app-bar>
     <v-main>
       <router-view />
@@ -34,13 +23,5 @@
 
   @Component({})
 
-  export default class App extends mixins() {
-    search = ""
-
-    handleCleanSearch() {
-      if( this.search !== "" ) {
-        this.search = ""
-      }
-    }
-  }
+  export default class App extends mixins() {}
 </script>

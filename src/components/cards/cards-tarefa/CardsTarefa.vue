@@ -3,8 +3,9 @@
     max-width="100%"
   >
     <v-card
-      :class="$vuetify.breakpoint.xsOnly ? 'my-4 py-4' : 'my-1 py-2'"
+      :class="$vuetify.breakpoint.xsOnly ? `my-4 py-4 ${setConcluido ? 'blue lighten-5 ': ''}` : `my-1 py-2 ${setConcluido ? 'blue lighten-5': ''}`"
       outlined
+      @click="$emit('setConcluido')"
     >
       <v-row>
         <v-col
@@ -20,16 +21,18 @@
               cols="1 pa-0"
               class="pl-4"
               :hidden="$vuetify.breakpoint.xsOnly"
+              @click="$emit('setConcluido')"
             >
               <v-checkbox
-                v-model="concluido"
+                v-model="setConcluido"
               />
             </v-col>
             <v-col
               cols="9 pa-0"
             >
-              <span 
-                v-text="tarefa"
+              <span
+                :class="setConcluido&&'text-decoration-line-through'"
+                v-text="setTarefa"
               />
             </v-col>
             <v-col
@@ -73,14 +76,14 @@
 
 <script>
   import { mixins } from "vue-class-component"
-  import { Component, Prop, Emit } from "vue-property-decorator"
+  import { Component, Emit, ModelSync, PropSync } from "vue-property-decorator"
 
   @Component({})
 
   export default class CardsProduct extends mixins() {
     @Emit('deletarTarefa')
     @Emit('editarTarefa')
-    @Prop({ default: "" }) tarefa
-    @Prop({ default: false }) concluido
+    @ModelSync("concluido", "setConcluido", { default: false }) setConcluido
+    @PropSync("tarefa", { type: String }) setTarefa
   }
 </script>

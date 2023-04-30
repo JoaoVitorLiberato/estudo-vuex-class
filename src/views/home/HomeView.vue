@@ -41,22 +41,24 @@
                   <card-product
                     :tarefa="tarefa"
                     :concluido="concluido"
+                    @setConcluido="handleConcluido(id)"
                     @editarTarefa="handleAbrirDialogEditar(id)"
                     @deletarTarefa="handleDeletarTarefa(id)"
                   />
                 </div>
               </v-col>
               <v-col
-              v-else
-              cols="12"
+                v-else
+                cols="12"
+                class="text-center text-uppercase font-weight-bold"
               >
-              <span 
+                <span 
                   v-text="'Sem tarefas'"
-                  />
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
+                />
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
         </v-col>
         <dialog-editar
           :value="novaTarefa.tarefa"
@@ -159,6 +161,21 @@
       this.listaDeTarefas()
       
       return this.dialogEditar = false
+    }
+
+    async handleConcluido(id) {
+      const PAYLOAD = require("@/data/tarefa/tarefa.json")
+      const response = await this.pegarTodasTarefasBD()
+      response.filter(async (item) => {
+        if(item.id === id) {
+          if(PAYLOAD) {
+            Vue.set(PAYLOAD, "concluido", this.novaTarefa.concluido = true)
+            Vue.set(PAYLOAD, "tarefa", item.tarefa)
+          }
+          await update("tarefas", PAYLOAD, id)
+          return this.listaDeTarefas()
+        }
+      })
     }
   }
 </script>
