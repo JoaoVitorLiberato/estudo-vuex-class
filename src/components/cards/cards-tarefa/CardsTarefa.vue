@@ -5,7 +5,6 @@
     <v-card
       :class="$vuetify.breakpoint.xsOnly ? `my-4 py-4 ${setConcluido ? 'blue lighten-5 ': ''}` : `my-1 py-2 ${setConcluido ? 'blue lighten-5': ''}`"
       outlined
-      @click="$emit('setConcluido')"
     >
       <v-row>
         <v-col
@@ -29,6 +28,7 @@
             </v-col>
             <v-col
               cols="9 pa-0"
+              @click="$emit('setConcluido')"
             >
               <span
                 :class="setConcluido&&'text-decoration-line-through'"
